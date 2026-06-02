@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>บริหารโครงการจัดงานศพ</title>
+<title>บริหารโครงการจัดงานคุณพ่อทองทวี สุจีรกุลไกร</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=Noto+Serif+Thai:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -240,6 +240,30 @@
 
   .task-note { font-size: 11px; color: var(--text-hint); font-style: italic; margin-top: 2px; }
 
+  /* ปรับปรุง CSS ของกล่องเอกสาร */
+  .task-doc { 
+    font-size: 11px; 
+    color: var(--amber); 
+    background: var(--amber-light); 
+    border: 1px solid #f2e3c6;
+    padding: 4px 8px; 
+    border-radius: 4px; 
+    display: inline-block;
+    margin-top: 4px;
+    max-width: 100%; /* บังคับไม่ให้ล้นจอ */
+    white-space: nowrap; /* ให้แสดงบรรทัดเดียว */
+    overflow: hidden; /* ซ่อนส่วนที่เกิน */
+    text-overflow: ellipsis; /* ใส่ ... ตรงที่ล้น */
+    vertical-align: top;
+  }
+
+  /* CSS สำหรับกรณีที่ยังไม่ได้พิมพ์เอกสาร */
+  .task-doc.empty {
+    color: var(--text-hint);
+    background: transparent;
+    border: 1px dashed var(--border-strong);
+  }
+
   .status-btn {
     font-size: 11px;
     padding: 3px 10px;
@@ -292,6 +316,8 @@
     padding: 20px;
     width: 360px;
     max-width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   .modal h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; color: var(--gold); }
@@ -316,7 +342,7 @@
     border-color: var(--gold-border);
   }
 
-  .field textarea { height: 70px; resize: vertical; }
+  .field textarea { height: 60px; resize: vertical; }
 
   .modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
 
@@ -424,6 +450,7 @@
         <option value="blocked">ติดขัด</option>
       </select>
     </div>
+    <div class="field"><label>เอกสาร/ประเด็นสำคัญ (จัดเตรียมล่วงหน้า)</label><textarea id="fDoc" placeholder="เช่น บัตรประชาชน, ทะเบียนบ้าน..."></textarea></div>
     <div class="field"><label>หมายเหตุ</label><textarea id="fNote"></textarea></div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeModal()">ยกเลิก</button>
@@ -435,45 +462,45 @@
 <script>
 const DEFAULT_PHASES = [
   {id:'p1', label:'ที่โรงพยาบาล', color:'#185FA5', tasks:[
-    {id:'t01', name:'รับใบรับรองการตายจากแพทย์', owner:'ญาติผู้ใหญ่ / หัวหน้าครอบครัว', status:'todo', note:'ต้องได้รับก่อนทำขั้นตอนอื่น'},
-    {id:'t02', name:'รับสิ่งของส่วนตัวผู้เสียชีวิต', owner:'ญาติผู้ใหญ่', status:'todo', note:''},
-    {id:'t03', name:'ติดต่อห้องเก็บศพ / ย้ายร่าง', owner:'พยาบาล + ญาติ', status:'todo', note:''},
-    {id:'t04', name:'ติดต่อและนัดรถรับศพ', owner:'ผู้ประสานงาน', status:'todo', note:'โรงพยาบาลมักมีรายชื่อแนะนำ'},
+    {id:'t01', name:'รับใบรับรองการตายจากแพทย์', owner:'ญาติผู้ใหญ่ / หัวหน้าครอบครัว', status:'todo', doc:'', note:'ต้องได้รับก่อนทำขั้นตอนอื่น'},
+    {id:'t02', name:'รับสิ่งของส่วนตัวผู้เสียชีวิต', owner:'ญาติผู้ใหญ่', status:'todo', doc:'', note:''},
+    {id:'t03', name:'ติดต่อห้องเก็บศพ / ย้ายร่าง', owner:'พยาบาล + ญาติ', status:'todo', doc:'', note:''},
+    {id:'t04', name:'ติดต่อและนัดรถรับศพ', owner:'ผู้ประสานงาน', status:'todo', doc:'', note:'โรงพยาบาลมักมีรายชื่อแนะนำ'},
   ]},
   {id:'p2', label:'แจ้งหน่วยงานราชการ', color:'#3B6D11', tasks:[
-    {id:'t05', name:'แจ้งสำนักทะเบียน (เขต/อำเภอ/เทศบาล)', owner:'ญาติผู้ใหญ่', status:'todo', note:'ภายใน 24 ชั่วโมง'},
-    {id:'t06', name:'รับใบมรณบัตร (ม.6)', owner:'ญาติผู้ใหญ่', status:'todo', note:'นำใบรับรองแพทย์ + บัตรปชช + ทะเบียนบ้าน'},
-    {id:'t07', name:'รับใบอนุญาตทำการศพ', owner:'ญาติผู้ใหญ่', status:'todo', note:'ห้ามเผา/ฝังโดยไม่มีใบอนุญาต'},
-    {id:'t08', name:'แจ้งประกันชีวิต / สิทธิ์สวัสดิการ', owner:'ผู้จัดการมรดก', status:'todo', note:'ตรวจสอบกรมธรรม์และกำหนดส่งเอกสาร'},
+    {id:'t05', name:'แจ้งสำนักทะเบียน (เขต/อำเภอ/เทศบาล)', owner:'ญาติผู้ใหญ่', status:'todo', doc:'', note:'ภายใน 24 ชั่วโมง'},
+    {id:'t06', name:'รับใบมรณบัตร (ม.6)', owner:'ญาติผู้ใหญ่', status:'todo', doc:'', note:'นำใบรับรองแพทย์ + บัตรปชช + ทะเบียนบ้าน'},
+    {id:'t07', name:'รับใบอนุญาตทำการศพ', owner:'ญาติผู้ใหญ่', status:'todo', doc:'', note:'ห้ามเผา/ฝังโดยไม่มีใบอนุญาต'},
+    {id:'t08', name:'แจ้งประกันชีวิต / สิทธิ์สวัสดิการ', owner:'ผู้จัดการมรดก', status:'todo', doc:'', note:'ตรวจสอบกรมธรรม์และกำหนดส่งเอกสาร'},
   ]},
   {id:'p3', label:'ติดต่อวัดและเตรียมงาน', color:'#854F0B', tasks:[
-    {id:'t09', name:'เลือกวัดและจองเมรุ', owner:'ผู้ประสานงาน', status:'todo', note:'จองวันสวด / วันฌาปนกิจ'},
-    {id:'t10', name:'นิมนต์พระสงฆ์', owner:'ผู้ประสานงาน', status:'todo', note:'4–10 รูปต่อคืน'},
-    {id:'t11', name:'สั่งโลงศพและดอกไม้', owner:'ผู้ประสานงาน', status:'todo', note:''},
-    {id:'t12', name:'เคลื่อนย้ายศพไปวัด', owner:'ผู้ประสานงาน + รถรับศพ', status:'todo', note:'ต้องมีใบอนุญาตทำการศพแล้ว'},
-    {id:'t13', name:'ประกาศแจ้งงานศพ / ส่ง LINE', owner:'ผู้ช่วย', status:'todo', note:'แจ้งวัน เวลา สถานที่'},
-    {id:'t14', name:'เตรียมอาหาร-น้ำดื่มรับแขก', owner:'ผู้ช่วย', status:'todo', note:'ทุกคืนสวด + วันฌาปนกิจ'},
+    {id:'t09', name:'เลือกวัดและจองเมรุ', owner:'ผู้ประสานงาน', status:'todo', doc:'', note:'จองวันสวด / วันฌาปนกิจ'},
+    {id:'t10', name:'นิมนต์พระสงฆ์', owner:'ผู้ประสานงาน', status:'todo', doc:'', note:'4–10 รูปต่อคืน'},
+    {id:'t11', name:'สั่งโลงศพและดอกไม้', owner:'ผู้ประสานงาน', status:'todo', doc:'', note:''},
+    {id:'t12', name:'เคลื่อนย้ายศพไปวัด', owner:'ผู้ประสานงาน + รถรับศพ', status:'todo', doc:'', note:'ต้องมีใบอนุญาตทำการศพแล้ว'},
+    {id:'t13', name:'ประกาศแจ้งงานศพ / ส่ง LINE', owner:'ผู้ช่วย', status:'todo', doc:'', note:'แจ้งวัน เวลา สถานที่'},
+    {id:'t14', name:'เตรียมอาหาร-น้ำดื่มรับแขก', owner:'ผู้ช่วย', status:'todo', doc:'', note:'ทุกคืนสวด + วันฌาปนกิจ'},
   ]},
   {id:'p4', label:'พิธีทางศาสนา', color:'#993C1D', tasks:[
-    {id:'t15', name:'พิธีตั้งศพ / สวดมาติกา (วันแรก)', owner:'พระสงฆ์ + ครอบครัว', status:'todo', note:''},
-    {id:'t16', name:'สวดพระอภิธรรม (ทุกคืน)', owner:'พระสงฆ์ + ผู้ประสานงาน', status:'todo', note:'ประมาณ 19.00–20.30 น.'},
-    {id:'t17', name:'เลี้ยงพระเช้าวันฌาปนกิจ', owner:'ครอบครัว + ผู้ช่วย', status:'todo', note:'สวดพุทธมนต์ + ถวายภัตตาหาร'},
-    {id:'t18', name:'พิธีฌาปนกิจ', owner:'พระสงฆ์ + ครอบครัว', status:'todo', note:'ชักผ้าบังสุกุล วางดอกไม้จันทน์ จุดเพลิง'},
-    {id:'t19', name:'เก็บอัฐิ (วันรุ่งขึ้น)', owner:'ครอบครัว', status:'todo', note:'บรรจุในผอบ / อัฐิ'},
+    {id:'t15', name:'พิธีตั้งศพ / สวดมาติกา (วันแรก)', owner:'พระสงฆ์ + ครอบครัว', status:'todo', doc:'', note:''},
+    {id:'t16', name:'สวดพระอภิธรรม (ทุกคืน)', owner:'พระสงฆ์ + ผู้ประสานงาน', status:'todo', doc:'', note:'ประมาณ 19.00–20.30 น.'},
+    {id:'t17', name:'เลี้ยงพระเช้าวันฌาปนกิจ', owner:'ครอบครัว + ผู้ช่วย', status:'todo', doc:'', note:'สวดพุทธมนต์ + ถวายภัตตาหาร'},
+    {id:'t18', name:'พิธีฌาปนกิจ', owner:'พระสงฆ์ + ครอบครัว', status:'todo', doc:'', note:'ชักผ้าบังสุกุล วางดอกไม้จันทน์ จุดเพลิง'},
+    {id:'t19', name:'เก็บอัฐิ (วันรุ่งขึ้น)', owner:'ครอบครัว', status:'todo', doc:'', note:'บรรจุในผอบ / อัฐิ'},
   ]},
   {id:'p5', label:'โปรยอัฐิ', color:'#534AB7', tasks:[
-    {id:'t20', name:'เลือกสถานที่โปรยอัฐิ', owner:'ครอบครัว', status:'todo', note:'แม่น้ำ ทะเล หรือสถานที่พิเศษ'},
-    {id:'t21', name:'ตรวจสอบข้อกำหนดท้องถิ่น', owner:'ผู้จัดการมรดก', status:'todo', note:'บางพื้นที่ต้องขออนุญาต'},
-    {id:'t22', name:'เช่าเรือ / เดินทางไปสถานที่', owner:'ผู้ประสานงาน', status:'todo', note:''},
-    {id:'t23', name:'นิมนต์พระ / นำสวดมนต์ก่อนโปรย', owner:'ผู้ประสานงาน', status:'todo', note:'ไม่บังคับแต่นิยมทำ'},
-    {id:'t24', name:'ประกอบพิธีโปรยอัฐิ', owner:'ครอบครัว', status:'todo', note:''},
+    {id:'t20', name:'เลือกสถานที่โปรยอัฐิ', owner:'ครอบครัว', status:'todo', doc:'', note:'แม่น้ำ ทะเล หรือสถานที่พิเศษ'},
+    {id:'t21', name:'ตรวจสอบข้อกำหนดท้องถิ่น', owner:'ผู้จัดการมรดก', status:'todo', doc:'', note:'บางพื้นที่ต้องขออนุญาต'},
+    {id:'t22', name:'เช่าเรือ / เดินทางไปสถานที่', owner:'ผู้ประสานงาน', status:'todo', doc:'', note:''},
+    {id:'t23', name:'นิมนต์พระ / นำสวดมนต์ก่อนโปรย', owner:'ผู้ประสานงาน', status:'todo', doc:'', note:'ไม่บังคับแต่นิยมทำ'},
+    {id:'t24', name:'ประกอบพิธีโปรยอัฐิ', owner:'ครอบครัว', status:'todo', doc:'', note:''},
   ]},
   {id:'p6', label:'ขั้นตอนหลังพิธี (กฎหมาย)', color:'#5F5E5A', tasks:[
-    {id:'t25', name:'แจ้งถอนชื่อจากทะเบียนบ้าน', owner:'ญาติผู้ใหญ่', status:'todo', note:'นำใบมรณบัตรไปที่สำนักงานเขต/อำเภอ'},
-    {id:'t26', name:'แจ้งธนาคาร / ปิดบัญชี', owner:'ผู้จัดการมรดก', status:'todo', note:'ต้องมีใบมรณบัตร + เอกสารมรดก'},
-    {id:'t27', name:'ยื่นเรื่องมรดก / พินัยกรรม', owner:'ผู้จัดการมรดก / ทนาย', status:'todo', note:'ภายใน 1 ปีนับจากวันเสียชีวิต'},
-    {id:'t28', name:'คืน/ยกเลิกบัตรประชาชน / Passport', owner:'ญาติผู้ใหญ่', status:'todo', note:'นำไปที่ว่าการอำเภอ'},
-    {id:'t29', name:'แจ้งกองทุนบำเหน็จ / บำนาญ', owner:'ผู้จัดการมรดก', status:'todo', note:'กบข. / ประกันสังคม / กองทุนสำรองเลี้ยงชีพ'},
+    {id:'t25', name:'แจ้งถอนชื่อจากทะเบียนบ้าน', owner:'ญาติผู้ใหญ่', status:'todo', doc:'', note:'นำใบมรณบัตรไปที่สำนักงานเขต/อำเภอ'},
+    {id:'t26', name:'แจ้งธนาคาร / ปิดบัญชี', owner:'ผู้จัดการมรดก', status:'todo', doc:'', note:'ต้องมีใบมรณบัตร + เอกสารมรดก'},
+    {id:'t27', name:'ยื่นเรื่องมรดก / พินัยกรรม', owner:'ผู้จัดการมรดก / ทนาย', status:'todo', doc:'', note:'ภายใน 1 ปีนับจากวันเสียชีวิต'},
+    {id:'t28', name:'คืน/ยกเลิกบัตรประชาชน / Passport', owner:'ญาติผู้ใหญ่', status:'todo', doc:'', note:'นำไปที่ว่าการอำเภอ'},
+    {id:'t29', name:'แจ้งกองทุนบำเหน็จ / บำนาญ', owner:'ผู้จัดการมรดก', status:'todo', doc:'', note:'กบข. / ประกันสังคม / กองทุนสำรองเลี้ยงชีพ'},
   ]},
 ];
 
@@ -523,10 +550,14 @@ function renderPhases() {
         ${phase.tasks.map((t, i) => `
         <div class="task-row" id="row_${t.id}">
           <span class="task-idx">${i+1}</span>
-          <div>
-            <div class="task-name">${t.name}</div>
+          <div style="min-width: 0;"> <div class="task-name">${t.name}</div>
             <div class="task-owner">👤 ${t.owner}</div>
             ${t.note ? `<div class="task-note">${t.note}</div>` : ''}
+            
+            <div class="task-doc ${t.doc ? '' : 'empty'}" title="${t.doc || 'คลิก ✎ เพื่อเพิ่มเอกสาร/สิ่งที่ต้องเตรียม'}">
+              📋 เตรียม: ${t.doc ? t.doc : 'ยังไม่ได้ระบุ...'}
+            </div>
+
           </div>
           <button class="status-btn ${STATUS_CLASS[t.status]}" onclick="cycleStatus('${t.id}')" title="กดเพื่อเปลี่ยนสถานะ">${STATUS_LABEL[t.status]}</button>
           <button class="edit-btn" onclick="openModal('${t.id}')" title="แก้ไข">✎</button>
@@ -557,6 +588,7 @@ function openModal(tid) {
   document.getElementById('fName').value = t.name;
   document.getElementById('fOwner').value = t.owner;
   document.getElementById('fStatus').value = t.status;
+  document.getElementById('fDoc').value = t.doc || '';
   document.getElementById('fNote').value = t.note || '';
   document.getElementById('modalOverlay').classList.add('show');
 }
@@ -572,6 +604,7 @@ function saveModal() {
   t.name = document.getElementById('fName').value;
   t.owner = document.getElementById('fOwner').value;
   t.status = document.getElementById('fStatus').value;
+  t.doc = document.getElementById('fDoc').value;
   t.note = document.getElementById('fNote').value;
   closeModal();
   renderPhases();
