@@ -1,412 +1,700 @@
-
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-							<style>
-								body {
-									background-color: white; /* Ensure the iframe has a white background */
-								}
-
-								
-							</style>
-                        </head>
-                        <body>
-                            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>บริหารโครงการจัดงานศพ</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Sarabun', sans-serif;
-      background: #f5f0eb;
-      color: #333;
-      min-height: 100vh;
-    }
-    header {
-      background: #4a3728;
-      color: white;
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    header h1 { font-size: 1.4rem; display: flex; align-items: center; gap: 8px; }
-    #connection-status {
-      font-size: 0.85rem;
-      padding: 4px 12px;
-      border-radius: 20px;
-      background: rgba(255,255,255,0.15);
-    }
-    .toolbar {
-      padding: 12px 24px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      background: #ede8e3;
-      border-bottom: 1px solid #d4c9be;
-    }
-    button {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-family: inherit;
-    }
-    .btn-primary   { background: #4a3728; color: white; }
-    .btn-secondary { background: #8d6e63; color: white; }
-    .btn-success   { background: #388e3c; color: white; }
-    .btn-danger    { background: #c62828; color: white; }
-    .btn-sm { padding: 4px 10px; font-size: 0.8rem; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บริหารโครงการจัดงานศพ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=Noto+Serif+Thai:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf9f7;
+    --surface: #ffffff;
+    --border: #e8e4dc;
+    --border-strong: #ccc8be;
+    --text: #1a1917;
+    --text-muted: #6b6760;
+    --text-hint: #a09d96;
+    --gold: #8b6914;
+    --gold-light: #f5edda;
+    --gold-border: #d4af5a;
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --green: #3B6D11;
+    --green-light: #EAF3DE;
+    --red: #A32D2D;
+    --red-light: #FCEBEB;
+    --amber: #854F0B;
+    --amber-light: #FAEEDA;
+    --purple: #534AB7;
+    --purple-light: #EEEDFE;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
 
-    main { padding: 20px 24px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* Modal */
-    .modal-overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal {
-      background: white;
-      border-radius: 10px;
-      padding: 24px;
-      width: 90%;
-      max-width: 480px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    }
-    .modal h2 { margin-bottom: 16px; color: #4a3728; }
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 0.9rem; }
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 0.95rem;
-      font-family: inherit;
-    }
-    .form-group textarea { resize: vertical; min-height: 80px; }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
 
-    /* Task Cards */
-    .board {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
-    }
-    .task-card {
-      background: white;
-      border-radius: 8px;
-      padding: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      border-left: 4px solid #ccc;
-    }
-    .task-card.status-pending  { border-left-color: #f9a825; }
-    .task-card.status-progress { border-left-color: #1976d2; }
-    .task-card.status-done     { border-left-color: #388e3c; }
-    .task-card.status-blocked  { border-left-color: #c62828; }
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
 
-    .task-title { font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
-    .task-meta  { font-size: 0.82rem; color: #666; margin-bottom: 4px; }
-    .task-note  { font-size: 0.85rem; color: #555; margin-top: 8px; background: #f9f6f3; padding: 6px 8px; border-radius: 4px; }
-    .task-actions { margin-top: 12px; display: flex; gap: 8px; }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-    .badge {
-      display: inline-block;
-      padding: 2px 10px;
-      border-radius: 12px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: white;
-    }
-    .badge-pending  { background: #f9a825; color: #333; }
-    .badge-progress { background: #1976d2; }
-    .badge-done     { background: #388e3c; }
-    .badge-blocked  { background: #c62828; }
+  .brand-icon {
+    width: 30px;
+    height: 30px;
+    background: var(--gold-light);
+    border: 1px solid var(--gold-border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
 
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #999;
-      font-size: 1rem;
-      grid-column: 1/-1;
-    }
+  .brand-name {
+    font-family: 'Noto Serif Thai', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.01em;
+  }
 
-    #btn-add-task {
-      position: fixed;
-      bottom: 28px; right: 28px;
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      background: #4a3728;
-      color: white;
-      font-size: 1.8rem;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-      z-index: 50;
-    }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-    @media print {
-      header, .toolbar, #btn-add-task, .task-actions, .modal-overlay { display: none !important; }
-      body { background: white; }
-      .task-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; margin-bottom: 12px; }
-    }
-  </style>
+  #syncStatus {
+    font-size: 12px;
+    color: var(--text-hint);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .sync-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ccc;
+    flex-shrink: 0;
+  }
+
+  .sync-dot.live { background: #3B6D11; }
+  .sync-dot.saving { background: #854F0B; animation: pulse 1s infinite; }
+  .sync-dot.error { background: #A32D2D; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .setup-banner {
+    background: #fff8e6;
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 20px 24px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .setup-banner.hidden { display: none; }
+
+  .setup-banner .icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+
+  .setup-banner h3 { font-size: 14px; font-weight: 600; color: var(--amber); margin-bottom: 6px; }
+
+  .setup-banner p { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+
+  .setup-input-row { display: flex; gap: 8px; }
+
+  .setup-input-row input {
+    flex: 1;
+    padding: 7px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: 'Sarabun', monospace;
+    background: #fff;
+  }
+
+  .setup-input-row input:focus { outline: none; border-color: var(--gold-border); }
+
+  .btn-connect {
+    padding: 7px 16px;
+    background: var(--gold);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: 'Sarabun', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .btn-connect:hover { background: #7a5c10; }
+
+  main { max-width: 800px; margin: 0 auto; padding: 20px 24px 60px; }
+
+  .summary-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    text-align: center;
+  }
+
+  .stat-num { font-size: 22px; font-weight: 600; }
+  .stat-lbl { font-size: 11px; color: var(--text-hint); margin-top: 2px; }
+
+  .phase {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    user-select: none;
+    background: #fdfcfa;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .phase-header:hover { background: #f8f6f2; }
+
+  .phase-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .phase-title { font-weight: 600; font-size: 14px; flex: 1; }
+
+  .phase-prog { font-size: 12px; color: var(--text-hint); }
+
+  .phase-chev {
+    font-size: 13px;
+    color: var(--text-hint);
+    transition: transform 0.2s;
+  }
+
+  .phase-chev.open { transform: rotate(180deg); }
+
+  .tasks { display: none; }
+  .tasks.open { display: block; }
+
+  .task-row {
+    display: grid;
+    grid-template-columns: 28px 1fr auto 32px;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+
+  .task-row:hover { background: #fdfcfa; }
+
+  .task-idx { font-size: 11px; color: var(--text-hint); text-align: center; }
+
+  .task-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+
+  .task-owner { font-size: 11px; color: var(--text-muted); }
+
+  .task-note { font-size: 11px; color: var(--text-hint); font-style: italic; margin-top: 2px; }
+
+  .status-btn {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Sarabun', sans-serif;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .s-todo { background: #F1EFE8; color: #5F5E5A; }
+  .s-doing { background: var(--blue-light); color: var(--blue); }
+  .s-done { background: var(--green-light); color: var(--green); }
+  .s-blocked { background: var(--red-light); color: var(--red); }
+
+  .edit-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border);
+    background: transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--text-hint);
+  }
+
+  .edit-btn:hover { background: var(--bg); color: var(--text-muted); }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 20px;
+    width: 360px;
+    max-width: 100%;
+  }
+
+  .modal h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; color: var(--gold); }
+
+  .field { margin-bottom: 12px; }
+
+  .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
+
+  .field input, .field select, .field textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--gold-border);
+  }
+
+  .field textarea { height: 70px; resize: vertical; }
+
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+
+  .btn-cancel {
+    padding: 8px 18px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: 'Sarabun', sans-serif;
+    cursor: pointer;
+    color: var(--text-muted);
+  }
+
+  .btn-save {
+    padding: 8px 18px;
+    border: none;
+    background: var(--gold);
+    color: #fff;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: 'Sarabun', sans-serif;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .btn-save:hover { background: #7a5c10; }
+
+  .top-actions { display: flex; justify-content: flex-end; margin-bottom: 14px; gap: 8px; }
+
+  .btn-export {
+    padding: 7px 14px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-family: 'Sarabun', sans-serif;
+    cursor: pointer;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .btn-export:hover { background: var(--bg); }
+
+  .last-update { font-size: 11px; color: var(--text-hint); text-align: right; margin-bottom: 10px; }
+
+  @media (max-width: 500px) {
+    .summary-bar { grid-template-columns: repeat(2, 1fr); }
+    header { padding: 0 14px; }
+    main { padding: 14px 14px 60px; }
+    .setup-banner { margin: 14px 14px 0; }
+  }
+</style>
 </head>
 <body>
 
 <header>
-  <h1>🪷 บริหารงานศพ</h1>
-  <span id="connection-status">⏳ กำลังเชื่อมต่อ...</span>
+  <div class="brand">
+    <div class="brand-icon">🪷</div>
+    <span class="brand-name">บริหารงานศพ</span>
+  </div>
+  <div class="header-right">
+    <div id="syncStatus">
+      <span class="sync-dot" id="syncDot"></span>
+      <span id="syncText">ยังไม่เชื่อมต่อ</span>
+    </div>
+  </div>
 </header>
 
-<!-- ✅ ลบ panel กรอก Firebase URL ออกทั้งหมด -->
-
-<div class="toolbar">
-  <button class="btn-secondary" onclick="exportJSON()">⬇ ส่งออก JSON</button>
-  <button class="btn-secondary" onclick="window.print()">🖨 พิมพ์</button>
-</div>
-
-<!-- Modal เพิ่ม/แก้ไขงาน -->
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
-    <h2 id="modal-title">แก้ไขงาน</h2>
-    <div class="form-group">
-      <label>ชื่องาน</label>
-      <input type="text" id="f-title" placeholder="เช่น จัดเตรียมสถานที่" />
-    </div>
-    <div class="form-group">
-      <label>ผู้รับผิดชอบ</label>
-      <input type="text" id="f-assignee" placeholder="ชื่อผู้รับผิดชอบ" />
-    </div>
-    <div class="form-group">
-      <label>สถานะ</label>
-      <select id="f-status">
-        <option value="pending">รอดำเนินการ</option>
-        <option value="progress">กำลังดำเนินการ</option>
-        <option value="done">เสร็จแล้ว</option>
-        <option value="blocked">ติดขัด</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>หมายเหตุ</label>
-      <textarea id="f-note" placeholder="รายละเอียดเพิ่มเติม..."></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal()">ยกเลิก</button>
-      <button class="btn-success"   onclick="saveTask()">บันทึก</button>
+<div class="setup-banner" id="setupBanner">
+  <div class="icon">🔗</div>
+  <div style="flex:1">
+    <h3>เชื่อมต่อ Firebase เพื่อ Sync ข้อมูลแบบ Real-time</h3>
+    <p>วางค่า <strong>Database URL</strong> จาก Firebase Console ด้านล่าง ทุกคนที่เปิดหน้านี้จะเห็นข้อมูลเดียวกันและอัปเดตได้ทันที<br>
+    <small style="color:#a09d96">วิธีสร้าง: firebase.google.com → สร้างโปรเจกต์ → Realtime Database → สร้าง DB (โหมด test) → คัดลอก URL</small></p>
+    <div class="setup-input-row">
+      <input type="text" id="fbUrlInput" placeholder="https://your-project-default-rtdb.firebaseio.com" />
+      <button class="btn-connect" onclick="connectFirebase()">เชื่อมต่อ</button>
     </div>
   </div>
 </div>
 
 <main>
-  <div class="board" id="board">
-    <div class="empty-state">⏳ กำลังโหลดข้อมูล...</div>
+  <div class="summary-bar" id="summaryBar"></div>
+  <div class="last-update" id="lastUpdate"></div>
+  <div class="top-actions">
+    <button class="btn-export" onclick="exportJSON()">⬇ ส่งออก JSON</button>
+    <button class="btn-export" onclick="printPage()">🖨 พิมพ์</button>
   </div>
+  <div id="phaseList"></div>
 </main>
 
-<button id="btn-add-task" title="เพิ่มงาน" onclick="openModal()">+</button>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle">แก้ไขงาน</h3>
+    <div class="field"><label>ชื่องาน</label><input id="fName" type="text"></div>
+    <div class="field"><label>ผู้รับผิดชอบ</label><input id="fOwner" type="text"></div>
+    <div class="field"><label>สถานะ</label>
+      <select id="fStatus">
+        <option value="todo">รอดำเนินการ</option>
+        <option value="doing">กำลังดำเนินการ</option>
+        <option value="done">เสร็จแล้ว</option>
+        <option value="blocked">ติดขัด</option>
+      </select>
+    </div>
+    <div class="field"><label>หมายเหตุ</label><textarea id="fNote"></textarea></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn-save" onclick="saveModal()">บันทึก</button>
+    </div>
+  </div>
+</div>
 
 <script>
-  // ✅ ฝัง URL ตายตัว ไม่ต้องให้ผู้ใช้กรอก
-  const FIREBASE_URL = "https://funeral-project-b36ca-default-rtdb.asia-southeast1.firebasedatabase.app";
+const DEFAULT_PHASES = [
+  {id:'p1', label:'ที่โรงพยาบาล', color:'#185FA5', tasks:[
+    {id:'t01', name:'รับใบรับรองการตายจากแพทย์', owner:'ญาติผู้ใหญ่ / หัวหน้าครอบครัว', status:'todo', note:'ต้องได้รับก่อนทำขั้นตอนอื่น'},
+    {id:'t02', name:'รับสิ่งของส่วนตัวผู้เสียชีวิต', owner:'ญาติผู้ใหญ่', status:'todo', note:''},
+    {id:'t03', name:'ติดต่อห้องเก็บศพ / ย้ายร่าง', owner:'พยาบาล + ญาติ', status:'todo', note:''},
+    {id:'t04', name:'ติดต่อและนัดรถรับศพ', owner:'ผู้ประสานงาน', status:'todo', note:'โรงพยาบาลมักมีรายชื่อแนะนำ'},
+  ]},
+  {id:'p2', label:'แจ้งหน่วยงานราชการ', color:'#3B6D11', tasks:[
+    {id:'t05', name:'แจ้งสำนักทะเบียน (เขต/อำเภอ/เทศบาล)', owner:'ญาติผู้ใหญ่', status:'todo', note:'ภายใน 24 ชั่วโมง'},
+    {id:'t06', name:'รับใบมรณบัตร (ม.6)', owner:'ญาติผู้ใหญ่', status:'todo', note:'นำใบรับรองแพทย์ + บัตรปชช + ทะเบียนบ้าน'},
+    {id:'t07', name:'รับใบอนุญาตทำการศพ', owner:'ญาติผู้ใหญ่', status:'todo', note:'ห้ามเผา/ฝังโดยไม่มีใบอนุญาต'},
+    {id:'t08', name:'แจ้งประกันชีวิต / สิทธิ์สวัสดิการ', owner:'ผู้จัดการมรดก', status:'todo', note:'ตรวจสอบกรมธรรม์และกำหนดส่งเอกสาร'},
+  ]},
+  {id:'p3', label:'ติดต่อวัดและเตรียมงาน', color:'#854F0B', tasks:[
+    {id:'t09', name:'เลือกวัดและจองเมรุ', owner:'ผู้ประสานงาน', status:'todo', note:'จองวันสวด / วันฌาปนกิจ'},
+    {id:'t10', name:'นิมนต์พระสงฆ์', owner:'ผู้ประสานงาน', status:'todo', note:'4–10 รูปต่อคืน'},
+    {id:'t11', name:'สั่งโลงศพและดอกไม้', owner:'ผู้ประสานงาน', status:'todo', note:''},
+    {id:'t12', name:'เคลื่อนย้ายศพไปวัด', owner:'ผู้ประสานงาน + รถรับศพ', status:'todo', note:'ต้องมีใบอนุญาตทำการศพแล้ว'},
+    {id:'t13', name:'ประกาศแจ้งงานศพ / ส่ง LINE', owner:'ผู้ช่วย', status:'todo', note:'แจ้งวัน เวลา สถานที่'},
+    {id:'t14', name:'เตรียมอาหาร-น้ำดื่มรับแขก', owner:'ผู้ช่วย', status:'todo', note:'ทุกคืนสวด + วันฌาปนกิจ'},
+  ]},
+  {id:'p4', label:'พิธีทางศาสนา', color:'#993C1D', tasks:[
+    {id:'t15', name:'พิธีตั้งศพ / สวดมาติกา (วันแรก)', owner:'พระสงฆ์ + ครอบครัว', status:'todo', note:''},
+    {id:'t16', name:'สวดพระอภิธรรม (ทุกคืน)', owner:'พระสงฆ์ + ผู้ประสานงาน', status:'todo', note:'ประมาณ 19.00–20.30 น.'},
+    {id:'t17', name:'เลี้ยงพระเช้าวันฌาปนกิจ', owner:'ครอบครัว + ผู้ช่วย', status:'todo', note:'สวดพุทธมนต์ + ถวายภัตตาหาร'},
+    {id:'t18', name:'พิธีฌาปนกิจ', owner:'พระสงฆ์ + ครอบครัว', status:'todo', note:'ชักผ้าบังสุกุล วางดอกไม้จันทน์ จุดเพลิง'},
+    {id:'t19', name:'เก็บอัฐิ (วันรุ่งขึ้น)', owner:'ครอบครัว', status:'todo', note:'บรรจุในผอบ / อัฐิ'},
+  ]},
+  {id:'p5', label:'โปรยอัฐิ', color:'#534AB7', tasks:[
+    {id:'t20', name:'เลือกสถานที่โปรยอัฐิ', owner:'ครอบครัว', status:'todo', note:'แม่น้ำ ทะเล หรือสถานที่พิเศษ'},
+    {id:'t21', name:'ตรวจสอบข้อกำหนดท้องถิ่น', owner:'ผู้จัดการมรดก', status:'todo', note:'บางพื้นที่ต้องขออนุญาต'},
+    {id:'t22', name:'เช่าเรือ / เดินทางไปสถานที่', owner:'ผู้ประสานงาน', status:'todo', note:''},
+    {id:'t23', name:'นิมนต์พระ / นำสวดมนต์ก่อนโปรย', owner:'ผู้ประสานงาน', status:'todo', note:'ไม่บังคับแต่นิยมทำ'},
+    {id:'t24', name:'ประกอบพิธีโปรยอัฐิ', owner:'ครอบครัว', status:'todo', note:''},
+  ]},
+  {id:'p6', label:'ขั้นตอนหลังพิธี (กฎหมาย)', color:'#5F5E5A', tasks:[
+    {id:'t25', name:'แจ้งถอนชื่อจากทะเบียนบ้าน', owner:'ญาติผู้ใหญ่', status:'todo', note:'นำใบมรณบัตรไปที่สำนักงานเขต/อำเภอ'},
+    {id:'t26', name:'แจ้งธนาคาร / ปิดบัญชี', owner:'ผู้จัดการมรดก', status:'todo', note:'ต้องมีใบมรณบัตร + เอกสารมรดก'},
+    {id:'t27', name:'ยื่นเรื่องมรดก / พินัยกรรม', owner:'ผู้จัดการมรดก / ทนาย', status:'todo', note:'ภายใน 1 ปีนับจากวันเสียชีวิต'},
+    {id:'t28', name:'คืน/ยกเลิกบัตรประชาชน / Passport', owner:'ญาติผู้ใหญ่', status:'todo', note:'นำไปที่ว่าการอำเภอ'},
+    {id:'t29', name:'แจ้งกองทุนบำเหน็จ / บำนาญ', owner:'ผู้จัดการมรดก', status:'todo', note:'กบข. / ประกันสังคม / กองทุนสำรองเลี้ยงชีพ'},
+  ]},
+];
 
-  let tasks      = {};
-  let editingId  = null;
-  let pollTimer  = null;
+const STATUS_LABEL = {todo:'รอดำเนินการ', doing:'กำลังดำเนินการ', done:'เสร็จแล้ว', blocked:'ติดขัด'};
+const STATUS_CLASS = {todo:'s-todo', doing:'s-doing', done:'s-done', blocked:'s-blocked'};
+const STATUS_ORDER = ['todo','doing','done','blocked'];
 
-  // =========================================================
-  // ✅ เชื่อมต่ออัตโนมัติ
-  // =========================================================
-  async function initFirebase() {
-    try {
-      const res = await fetch(`${FIREBASE_URL}/tasks.json`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      tasks = (data && typeof data === "object") ? data : {};
-      setStatus(true);
-      renderBoard();
-      // เริ่ม polling real-time
-      if (pollTimer) clearInterval(pollTimer);
-      pollTimer = setInterval(syncFromFirebase, 5000);
-    } catch (err) {
-      setStatus(false);
-      document.getElementById("board").innerHTML =
-        '<div class="empty-state">❌ เชื่อมต่อ Firebase ไม่สำเร็จ กรุณารีเฟรชหน้า</div>';
-      console.error("Firebase Error:", err);
-    }
+let phases = JSON.parse(JSON.stringify(DEFAULT_PHASES));
+let editingId = null;
+let fbBaseUrl = 'https://funeral-project-b36ca-default-rtdb.asia-southeast1.firebasedatabase.app';
+let openPhases = {};
+DEFAULT_PHASES.forEach(p => openPhases[p.id] = true);
+
+function getTask(tid) {
+  for (const p of phases) {
+    const t = p.tasks.find(x => x.id === tid);
+    if (t) return t;
   }
+  return null;
+}
 
-  // =========================================================
-  // Polling sync
-  // =========================================================
-  async function syncFromFirebase() {
-    try {
-      const res = await fetch(`${FIREBASE_URL}/tasks.json`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      tasks = (data && typeof data === "object") ? data : {};
-      setStatus(true);
-      renderBoard();
-    } catch (err) {
-      setStatus(false);
-      console.warn("Sync ล้มเหลว:", err.message);
-    }
-  }
+function allTasks() { return phases.flatMap(p => p.tasks); }
 
-  // =========================================================
-  // Firebase REST
-  // =========================================================
-  async function writeTask(id, taskData) {
-    const res = await fetch(`${FIREBASE_URL}/tasks/${id}.json`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(taskData)
+function renderSummary() {
+  const counts = {todo:0, doing:0, done:0, blocked:0};
+  allTasks().forEach(t => counts[t.status]++);
+  const colors = {todo:'#888', doing:'#185FA5', done:'#3B6D11', blocked:'#A32D2D'};
+  document.getElementById('summaryBar').innerHTML = Object.entries(counts).map(([k,v]) =>
+    `<div class="stat"><div class="stat-num" style="color:${colors[k]}">${v}</div><div class="stat-lbl">${STATUS_LABEL[k]}</div></div>`
+  ).join('');
+}
+
+function renderPhases() {
+  const list = document.getElementById('phaseList');
+  list.innerHTML = phases.map(phase => {
+    const done = phase.tasks.filter(t => t.status === 'done').length;
+    const total = phase.tasks.length;
+    const isOpen = openPhases[phase.id] !== false;
+    return `<div class="phase">
+      <div class="phase-header" onclick="togglePhase('${phase.id}')">
+        <div class="phase-dot" style="background:${phase.color}"></div>
+        <span class="phase-title">${phase.label}</span>
+        <span class="phase-prog">${done}/${total}</span>
+        <span class="phase-chev ${isOpen?'open':''}">▾</span>
+      </div>
+      <div class="tasks ${isOpen?'open':''}">
+        ${phase.tasks.map((t, i) => `
+        <div class="task-row" id="row_${t.id}">
+          <span class="task-idx">${i+1}</span>
+          <div>
+            <div class="task-name">${t.name}</div>
+            <div class="task-owner">👤 ${t.owner}</div>
+            ${t.note ? `<div class="task-note">${t.note}</div>` : ''}
+          </div>
+          <button class="status-btn ${STATUS_CLASS[t.status]}" onclick="cycleStatus('${t.id}')" title="กดเพื่อเปลี่ยนสถานะ">${STATUS_LABEL[t.status]}</button>
+          <button class="edit-btn" onclick="openModal('${t.id}')" title="แก้ไข">✎</button>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function togglePhase(pid) {
+  openPhases[pid] = !openPhases[pid];
+  renderPhases();
+}
+
+function cycleStatus(tid) {
+  const t = getTask(tid);
+  const idx = STATUS_ORDER.indexOf(t.status);
+  t.status = STATUS_ORDER[(idx + 1) % STATUS_ORDER.length];
+  renderPhases();
+  renderSummary();
+  saveToFirebase();
+}
+
+function openModal(tid) {
+  const t = getTask(tid);
+  editingId = tid;
+  document.getElementById('modalTitle').textContent = 'แก้ไข: ' + t.name;
+  document.getElementById('fName').value = t.name;
+  document.getElementById('fOwner').value = t.owner;
+  document.getElementById('fStatus').value = t.status;
+  document.getElementById('fNote').value = t.note || '';
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+  editingId = null;
+}
+
+function saveModal() {
+  if (!editingId) return;
+  const t = getTask(editingId);
+  t.name = document.getElementById('fName').value;
+  t.owner = document.getElementById('fOwner').value;
+  t.status = document.getElementById('fStatus').value;
+  t.note = document.getElementById('fNote').value;
+  closeModal();
+  renderPhases();
+  renderSummary();
+  saveToFirebase();
+}
+
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function setSyncStatus(state, text) {
+  const dot = document.getElementById('syncDot');
+  dot.className = 'sync-dot ' + state;
+  document.getElementById('syncText').textContent = text;
+}
+
+function setLastUpdate(ts) {
+  if (!ts) return;
+  const d = new Date(ts);
+  document.getElementById('lastUpdate').textContent = 'อัปเดตล่าสุด: ' + d.toLocaleString('th-TH');
+}
+
+async function saveToFirebase() {
+  if (!fbBaseUrl) return;
+  setSyncStatus('saving', 'กำลังบันทึก...');
+  try {
+    const payload = { phases, updatedAt: Date.now() };
+    const res = await fetch(fbBaseUrl + '/funeral_project.json', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    setSyncStatus('live', 'ซิงค์แล้ว');
+  } catch (e) {
+    setSyncStatus('error', 'บันทึกไม่สำเร็จ');
   }
+}
 
-  async function removeTask(id) {
-    const res = await fetch(`${FIREBASE_URL}/tasks/${id}.json`, { method: "DELETE" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  }
-
-  // =========================================================
-  // UI Status
-  // =========================================================
-  function setStatus(ok) {
-    document.getElementById("connection-status").textContent =
-      ok ? "🟢 เชื่อมต่อแล้ว" : "🔴 การเชื่อมต่อขัดข้อง";
-  }
-
-  // =========================================================
-  // Render
-  // =========================================================
-  const STATUS_LABEL = {
-    pending:  "รอดำเนินการ",
-    progress: "กำลังดำเนินการ",
-    done:     "เสร็จแล้ว",
-    blocked:  "ติดขัด"
-  };
-
-  function renderBoard() {
-    const board = document.getElementById("board");
-    const ids   = Object.keys(tasks);
-    if (!ids.length) {
-      board.innerHTML = '<div class="empty-state">📋 ยังไม่มีงาน — กด <b>+</b> เพื่อเพิ่มงาน</div>';
-      return;
+async function loadFromFirebase() {
+  if (!fbBaseUrl) return false;
+  setSyncStatus('saving', 'กำลังโหลด...');
+  try {
+    const res = await fetch(fbBaseUrl + '/funeral_project.json');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data && data.phases) {
+      phases = data.phases;
+      setLastUpdate(data.updatedAt);
     }
-    board.innerHTML = ids.map(id => {
-      const t  = tasks[id];
-      const st = t.status || "pending";
-      return `
-        <div class="task-card status-${st}">
-          <div class="task-title">${esc(t.title || "(ไม่มีชื่อ)")}</div>
-          <div class="task-meta">👤 ${esc(t.assignee || "-")}</div>
-          <div class="task-meta">
-            <span class="badge badge-${st}">${STATUS_LABEL[st] || st}</span>
-          </div>
-          ${t.note ? `<div class="task-note">📝 ${esc(t.note)}</div>` : ""}
-          <div class="task-actions">
-            <button class="btn-primary btn-sm"  onclick="openModal('${id}')">✏️ แก้ไข</button>
-            <button class="btn-danger  btn-sm"  onclick="confirmDelete('${id}')">🗑 ลบ</button>
-          </div>
-        </div>`;
-    }).join("");
+    setSyncStatus('live', 'เชื่อมต่อแล้ว');
+    return true;
+  } catch (e) {
+    setSyncStatus('error', 'เชื่อมต่อไม่สำเร็จ');
+    return false;
   }
+}
 
-  function esc(str) {
-    return String(str)
-      .replace(/&/g,"&amp;").replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-  }
-
-  // =========================================================
-  // Modal
-  // =========================================================
-  function openModal(id = null) {
-    editingId = id;
-    document.getElementById("modal-title").textContent = id ? "แก้ไขงาน" : "เพิ่มงานใหม่";
-    const t = id && tasks[id] ? tasks[id] : {};
-    document.getElementById("f-title").value    = t.title    || "";
-    document.getElementById("f-assignee").value = t.assignee || "";
-    document.getElementById("f-status").value   = t.status   || "pending";
-    document.getElementById("f-note").value     = t.note     || "";
-    document.getElementById("modal-overlay").classList.add("active");
-  }
-
-  function closeModal() {
-    document.getElementById("modal-overlay").classList.remove("active");
-    editingId = null;
-  }
-
-  // =========================================================
-  // Save / Delete
-  // =========================================================
-  async function saveTask() {
-    const title    = document.getElementById("f-title").value.trim();
-    const assignee = document.getElementById("f-assignee").value.trim();
-    const status   = document.getElementById("f-status").value;
-    const note     = document.getElementById("f-note").value.trim();
-
-    if (!title) { alert("กรุณากรอกชื่องาน"); return; }
-
-    const id       = editingId || `task_${Date.now()}`;
-    const taskData = { title, assignee, status, note, updatedAt: Date.now() };
-
+function pollFirebase() {
+  if (!fbBaseUrl) return;
+  setInterval(async () => {
     try {
-      await writeTask(id, taskData);
-      tasks[id] = taskData;
-      renderBoard();
-      closeModal();
-    } catch (err) {
-      alert("❌ บันทึกไม่สำเร็จ: " + err.message);
+      const res = await fetch(fbBaseUrl + '/funeral_project.json');
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data && data.phases) {
+        phases = data.phases;
+        setLastUpdate(data.updatedAt);
+        renderPhases();
+        renderSummary();
+        setSyncStatus('live', 'เชื่อมต่อแล้ว');
+      }
+    } catch (e) { setSyncStatus('error', 'หลุดการเชื่อมต่อ'); }
+  }, 10000);
+}
+
+async function connectFirebase() {
+  let url = document.getElementById('fbUrlInput').value.trim().replace(/\/$/, '');
+  if (!url.startsWith('https://')) {
+    alert('URL ต้องขึ้นต้นด้วย https://');
+    return;
+  }
+  fbBaseUrl = url;
+  localStorage.setItem('fb_url', fbBaseUrl);
+  const ok = await loadFromFirebase();
+  if (ok) {
+    document.getElementById('setupBanner').classList.add('hidden');
+    renderPhases();
+    renderSummary();
+    pollFirebase();
+    if (allTasks().every(t => t.status === 'todo')) {
+      saveToFirebase();
     }
   }
+}
 
-  async function confirmDelete(id) {
-    if (!confirm(`ลบงาน "${tasks[id]?.title || id}" ?`)) return;
-    try {
-      await removeTask(id);
-      delete tasks[id];
-      renderBoard();
-    } catch (err) {
-      alert("❌ ลบไม่สำเร็จ: " + err.message);
+function exportJSON() {
+  const blob = new Blob([JSON.stringify({phases, exportedAt: new Date().toISOString()}, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'funeral_project_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+}
+
+function printPage() { window.print(); }
+
+async function init() {
+  if (fbBaseUrl) {
+    document.getElementById('fbUrlInput').value = fbBaseUrl;
+    const ok = await loadFromFirebase();
+    if (ok) {
+      document.getElementById('setupBanner').classList.add('hidden');
+      pollFirebase();
     }
+  } else {
+    setSyncStatus('', 'ยังไม่เชื่อมต่อ');
   }
+  renderPhases();
+  renderSummary();
+}
 
-  // =========================================================
-  // Export
-  // =========================================================
-  function exportJSON() {
-    const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: "application/json" });
-    const a    = document.createElement("a");
-    a.href     = URL.createObjectURL(blob);
-    a.download = `funeral_tasks_${Date.now()}.json`;
-    a.click();
-  }
-
-  // ✅ เริ่มทำงานอัตโนมัติทันทีที่หน้าโหลด
-  window.addEventListener("DOMContentLoaded", initFirebase);
+init();
 </script>
 </body>
 </html>
-
-							<script>
-                            	
-							</script>
-                        </body>
-                        </html>
-                    
